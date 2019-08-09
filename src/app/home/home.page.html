@@ -1,14 +1,70 @@
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      Ionic Blank
+      {{ roomName }}
     </ion-title>
+    <ion-buttons slot="end">
+      <ion-button slot="icon-only" (click)="exitChat()">
+        <ion-icon name="exit"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content #content class="content">
   <div class="ion-padding">
-    The world is your oyster.
-    <p>If you get lost, the <a target="_blank" rel="noopener" href="https://ionicframework.com/docs/">docs</a> will be your guide.</p>
+    <ion-list color="primary">
+      <ion-item *ngFor="let chat of chats" lines="none" color="primary">
+        <ion-label class="ion-text-center">
+          <div
+            class="chat-status ion-text-center"
+            *ngIf="chat.type === 'join' || chat.type === 'exit'; else message"
+          >
+            <span class="chat-date">{{
+              chat.sendDate | date: "dd/MM/yyyy - HH:mm"
+            }}</span>
+            <span class="chat-content-center">{{ chat.message }}</span>
+          </div>
+        </ion-label>
+        <ng-template #message>
+          <div class="chat-message ion-text-end" *ngIf="chat.uid === uuid">
+            <div class="right-bubble">
+              <span class="msg-name">Você: </span>
+              <span class="msg-date">{{
+                chat.sendDate | date: "dd/MM/yyyy - HH:mm"
+              }}</span>
+              <p class="ion-text-wrap">{{ chat.message }}</p>
+            </div>
+          </div>
+          <div class="chat-message ion-text-start" *ngIf="chat.uid !== uuid">
+            <div class="left-bubble">
+              <span class="msg-name">{{ chat.user }}: </span>
+              <span class="msg-date">{{
+                chat.sendDate | date: "dd/MM/yyyy - HH:mm"
+              }}</span>
+              <p class="ion-text-wrap">{{ chat.message }}</p>
+            </div>
+          </div>
+        </ng-template>
+      </ion-item>
+    </ion-list>
   </div>
 </ion-content>
+
+<ion-footer>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="10">
+        <ion-input
+          type="text"
+          placeholder="Digite uma mensagem"
+          [(ngModel)]="data.message"
+          name="message"
+        ></ion-input>
+      </ion-col>
+      <ion-col size="2" (click)="sendMessage()">
+        <ion-icon name="paper-plane"></ion-icon>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-footer>
